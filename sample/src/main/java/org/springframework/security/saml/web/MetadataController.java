@@ -44,7 +44,7 @@ import static org.springframework.util.StringUtils.hasLength;
  * Class allows manipulation of metadata from web UI.
  */
 @Controller
-@RequestMapping("/metadata")
+@RequestMapping("/admin/metadata")
 public class MetadataController {
 
     private final Logger log = LoggerFactory.getLogger(MetadataController.class);
@@ -118,7 +118,7 @@ public class MetadataController {
         model.addObject("availableKeys", getAvailablePrivateKeys());
         defaultForm.setBaseURL(getBaseURL(request));
         defaultForm.setEntityId(getEntityId(request));
-        defaultForm.setNameID(MetadataGenerator.defaultNameID.toArray(new String[MetadataGenerator.defaultNameID.size()]));
+        defaultForm.setNameID(MetadataGenerator.defaultNameID.toArray(new String[ MetadataGenerator.defaultNameID.size() ]));
 
         model.addObject("metadata", defaultForm);
         return model;
@@ -299,6 +299,7 @@ public class MetadataController {
     }
 
     protected String getMetadataAsString(EntityDescriptor descriptor, ExtendedMetadata extendedMetadata) throws MarshallingException {
+
         return SAMLUtil.getMetadataAsString(metadataManager, keyManager, descriptor, extendedMetadata);
     }
 
@@ -311,11 +312,13 @@ public class MetadataController {
     }
 
     protected String getEntityId(HttpServletRequest request) {
+
         log.debug("Server name used as entity id {}", request.getServerName());
         return request.getServerName();
     }
 
     protected Map<String, String> getAvailablePrivateKeys() throws KeyStoreException {
+
         Map<String, String> availableKeys = new HashMap<String, String>();
         Set<String> aliases = keyManager.getAvailableCredentials();
         for (String key : aliases) {
@@ -334,6 +337,7 @@ public class MetadataController {
     }
 
     protected String getFileName(EntityDescriptor entityDescriptor) {
+
         StringBuilder fileName = new StringBuilder();
         for (Character c : entityDescriptor.getEntityID().toCharArray()) {
             if (Character.isJavaIdentifierPart(c)) {
@@ -349,55 +353,31 @@ public class MetadataController {
     }
 
     protected String getConfiguration(String fileName, ExtendedMetadata metadata) {
+
         StringBuilder sb = new StringBuilder();
-        sb.append("<bean class=\"org.springframework.security.saml.metadata.ExtendedMetadataDelegate\">\n" +
-                "    <constructor-arg>\n" +
-                "        <bean class=\"org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider\">\n" +
-                "            <constructor-arg>\n" +
-                "                <bean class=\"java.util.Timer\"/>\n" +
-                "            </constructor-arg>\n" +
-                "            <constructor-arg>\n" +
-                "                <bean class=\"org.opensaml.util.resource.ClasspathResource\">\n" +
-                "                    <constructor-arg value=\"/metadata/").append(fileName).append("\"/>\n" +
-                "                </bean>\n" +
-                "            </constructor-arg>\n" +
-                "            <property name=\"parserPool\" ref=\"parserPool\"/>\n" +
-                "        </bean>\n" +
-                "    </constructor-arg>\n" +
-                "    <constructor-arg>\n" +
-                "        <bean class=\"org.springframework.security.saml.metadata.ExtendedMetadata\">\n" +
-                "           <property name=\"local\" value=\"true\"/>\n");
+        sb.append("<bean class=\"org.springframework.security.saml.metadata.ExtendedMetadataDelegate\">\n" + "    <constructor-arg>\n" + "        <bean class=\"org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider\">\n" + "            <constructor-arg>\n" + "                <bean class=\"java.util.Timer\"/>\n" + "            </constructor-arg>\n" + "            <constructor-arg>\n" + "                <bean class=\"org.opensaml.util.resource.ClasspathResource\">\n" + "                    <constructor-arg value=\"/metadata/").append(fileName).append("\"/>\n" + "                </bean>\n" + "            </constructor-arg>\n" + "            <property name=\"parserPool\" ref=\"parserPool\"/>\n" + "        </bean>\n" + "    </constructor-arg>\n" + "    <constructor-arg>\n" + "        <bean class=\"org.springframework.security.saml.metadata.ExtendedMetadata\">\n" + "           <property name=\"local\" value=\"true\"/>\n");
         if (metadata.getAlias() != null) {
             sb.append("           <property name=\"alias\" value=\"").append(metadata.getAlias()).append("\"/>\n");
         }
-        sb.append("           <property name=\"securityProfile\" value=\"").append(metadata.getSecurityProfile()).append("\"/>\n" +
-                "           <property name=\"sslSecurityProfile\" value=\"").append(metadata.getSslSecurityProfile()).append("\"/>\n" +
-                "           <property name=\"sslHostnameVerification\" value=\"").append(metadata.getSslHostnameVerification()).append("\"/>\n" +
-                "           <property name=\"signMetadata\" value=\"").append(metadata.isSignMetadata()).append("\"/>\n" +
-                "           <property name=\"signingKey\" value=\"").append(metadata.getSigningKey()).append("\"/>\n" +
-                "           <property name=\"encryptionKey\" value=\"").append(metadata.getEncryptionKey()).append("\"/>\n");
+        sb.append("           <property name=\"securityProfile\" value=\"").append(metadata.getSecurityProfile()).append("\"/>\n" + "           <property name=\"sslSecurityProfile\" value=\"").append(metadata.getSslSecurityProfile()).append("\"/>\n" + "           <property name=\"sslHostnameVerification\" value=\"").append(metadata.getSslHostnameVerification()).append("\"/>\n" + "           <property name=\"signMetadata\" value=\"").append(metadata.isSignMetadata()).append("\"/>\n" + "           <property name=\"signingKey\" value=\"").append(metadata.getSigningKey()).append("\"/>\n" + "           <property name=\"encryptionKey\" value=\"").append(metadata.getEncryptionKey()).append("\"/>\n");
         if (metadata.getTlsKey() != null) {
             sb.append("           <property name=\"tlsKey\" value=\"").append(metadata.getTlsKey()).append("\"/>\n");
         }
         if (metadata.getSigningAlgorithm() != null) {
             sb.append("           <property name=\"signingAlgorithm\" value=\"").append(metadata.getSigningAlgorithm()).append("\"/>\n");
         }
-        sb.append("           <property name=\"requireArtifactResolveSigned\" value=\"").append(metadata.isRequireArtifactResolveSigned()).append("\"/>\n" +
-                "           <property name=\"requireLogoutRequestSigned\" value=\"").append(metadata.isRequireLogoutRequestSigned()).append("\"/>\n" +
-                "           <property name=\"requireLogoutResponseSigned\" value=\"").append(metadata.isRequireLogoutResponseSigned()).append("\"/>\n");
+        sb.append("           <property name=\"requireArtifactResolveSigned\" value=\"").append(metadata.isRequireArtifactResolveSigned()).append("\"/>\n" + "           <property name=\"requireLogoutRequestSigned\" value=\"").append(metadata.isRequireLogoutRequestSigned()).append("\"/>\n" + "           <property name=\"requireLogoutResponseSigned\" value=\"").append(metadata.isRequireLogoutResponseSigned()).append("\"/>\n");
         sb.append("           <property name=\"idpDiscoveryEnabled\" value=\"").append(metadata.isIdpDiscoveryEnabled()).append("\"/>\n");
         if (metadata.isIdpDiscoveryEnabled()) {
-            sb.append("           <property name=\"idpDiscoveryURL\" value=\"").append(metadata.getIdpDiscoveryURL()).append("\"/>\n" +
-                    "           <property name=\"idpDiscoveryResponseURL\" value=\"").append(metadata.getIdpDiscoveryResponseURL()).append("\"/>\n");
+            sb.append("           <property name=\"idpDiscoveryURL\" value=\"").append(metadata.getIdpDiscoveryURL()).append("\"/>\n" + "           <property name=\"idpDiscoveryResponseURL\" value=\"").append(metadata.getIdpDiscoveryResponseURL()).append("\"/>\n");
         }
-        sb.append("        </bean>\n" +
-                "    </constructor-arg>\n" +
-                "</bean>");
+        sb.append("        </bean>\n" + "    </constructor-arg>\n" + "</bean>");
         return sb.toString();
     }
 
     @ModelAttribute(value = "tab")
     public String getTabName() {
+
         return "metadata";
     }
 
