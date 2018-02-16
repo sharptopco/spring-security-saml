@@ -16,6 +16,8 @@ package org.springframework.security.saml.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.saml.service.CloudCardLoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -25,9 +27,13 @@ public class CloudCardLoginController {
 
     private final Logger log = LoggerFactory.getLogger(CloudCardLoginController.class);
 
+    @Autowired
+    CloudCardLoginService cloudCardLoginService;
+
     @RequestMapping
     public String metadataList() {
 
+        log.error(cloudCardLoginService.bacon());
         return "redirect:https://app.onlinephotosubmission.com";
 
     }
